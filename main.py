@@ -1,6 +1,8 @@
 import pygame
 from constants import *
 from player import *
+from asteroid import *
+from asteroid_field import *
 
 def main():
     pygame.init()
@@ -8,9 +10,27 @@ def main():
     clock = pygame.time.Clock()
     dt = 0 
 
+    #groups
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+
+    #assign groups
+    Player.containers = (updatable, drawable)
+    Asteroid.containers = (asteroids, updatable, drawable)
+    AsteroidField.containers = updatable
+
+    # init asteroids
+    asteroid_field = AsteroidField()
+
+    # player size
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
-    ## draw game to screen ##
+    ## -- GAME LOOP -- ##
+    ## 1. check for inputs
+    ## 2. update the game world
+    ## 3. draw game to screen
+
     while True:
 
         # make window close button work
@@ -18,15 +38,17 @@ def main():
             if event.type == pygame.QUIT:
                 return 
             
-        # update player pos
-        player.update(dt)
+        # update positions
+        for obj in updatable:
+            obj.update(dt)
 
-        # draw and refresh    
+        # draw updated positions   
         screen.fill("black")
-        player.draw(screen)
-        pygame.display.flip()
+        for obj in drawable:
+            obj.draw(screen)
 
-        # 60 FPS
+        # refresh @ 60 FPS
+        pygame.display.flip()
         dt = clock.tick(60) / 1000
 
 if __name__ == "__main__":

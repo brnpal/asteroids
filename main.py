@@ -47,6 +47,10 @@ def main():
         for obj in drawable:
             obj.draw(screen)
 
+        #detect collision
+        for asteroid in asteroids:
+            player.check_collision(asteroid)
+
         # refresh @ 60 FPS
         pygame.display.flip()
         dt = clock.tick(60) / 1000
